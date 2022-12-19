@@ -33,98 +33,86 @@ import numpy as np
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from preparacion_redes_conv import preparacion_capa_concolucion
+import keras
+
+
+
 #Definición de largo y ancho de la imagen
 LARGO_IMAGEN = 28
 ANCHO_IMAGEN = 28
 
 #Carga de los datos de entrenamiento
 observaciones_entrenamiento = pnd.read_csv('datas/zalando/fashion-mnist_train.csv')
-
-#Solo se guardan las características "píxeles"
-X = np.array(observaciones_entrenamiento.iloc[:, 1:])
-
-#Se crea una tabla de categorías con la ayuda del módulo Keras
-y = to_categorical(np.array(observaciones_entrenamiento.iloc[:, 0]))
-
-#Distribución de los datos de entrenamiento en datos de aprendizaje y datos de validación
-#80 % de datos de aprendizaje y 20 % de datos de validación
-X_aprendizaje, X_validacion, y_aprendizaje, y_validacion = train_test_split(X, y, test_size=0.2, random_state=13)
-
-
-# Se redimensionan las imágenes al formato 28*28 y se realiza una adaptación de escala en los datos de los píxeles
-X_aprendizaje = X_aprendizaje.reshape(X_aprendizaje.shape[0], ANCHO_IMAGEN, LARGO_IMAGEN, 1)
-X_aprendizaje = X_aprendizaje.astype('float32')
-X_aprendizaje /= 255
-
-# Se hace lo mismo con los datos de validación
-X_validacion = X_validacion.reshape(X_validacion.shape[0], ANCHO_IMAGEN, LARGO_IMAGEN, 1)
-X_validacion = X_validacion.astype('float32')
-X_validacion /= 255
-
-#Preparación de los datos de prueba
 observaciones_test = pnd.read_csv('datas/zalando/fashion-mnist_test.csv')
 
-X_test = np.array(observaciones_test.iloc[:, 1:])
-y_test = to_categorical(np.array(observaciones_test.iloc[:, 0]))
 
-X_test = X_test.reshape(X_test.shape[0], ANCHO_IMAGEN, LARGO_IMAGEN, 1)
-X_test = X_test.astype('float32')
-X_test /= 255
+class capa_concolucion():
+    def __init__(self,observaciones_entrenamiento,observaciones_test, ancho_imagen, largo_imagen ):
+        self.observaciones_entrenamiento=observaciones_entrenamiento
+        self.observaciones_test=observaciones_test
+        self.ancho_imagen=ancho_imagen
+        self.largo_imagen=largo_imagen
 
+    preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento, self.ancho_imagen, self.largo_imagen)
 #----------------------- CNN 1 ------------------------
 
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+    def creacion_red(self):
 
-#Se especifican las dimensiones de la imagen de entrada
-dimensionImagen = (ANCHO_IMAGEN, LARGO_IMAGEN, 1)
+        #Se especifican las dimensiones de la imagen de entrada
+        dimensionImagen = (self.ancho_imagen, self.largo_imagen, 1)
 
-#Se crea la red neuronal capa por capa
-redNeurona1Convolucion = Sequential()
+        #Se crea la red neuronal capa por capa
+        redNeurona1Convolucion = Sequential()
 
-#1- Adición de la capa de convolución que contiene
-#  Capa coculta de 32 neuronas
-#  Un filtro de 3x3 (Kernel) recorriendo la imagen
-#  Una función de activación de tipo ReLU (Rectified Linear Activation)
-#  Una imagen de entrada de 28px * 28 px
-redNeurona1Convolucion.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=dimensionImagen))
+        #1- Adición de la capa de convolución que contiene
+        #  Capa coculta de 32 neuronas
+        #  Un filtro de 3x3 (Kernel) recorriendo la imagen
+        #  Una función de activación de tipo ReLU (Rectified Linear Activation)
+        #  Una imagen de entrada de 28px * 28 px
+        redNeurona1Convolucion.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=dimensionImagen))
 
-#2- Definición de la función de pooling con un filtro de 2px por 2 px
-redNeurona1Convolucion.add(MaxPooling2D(pool_size=(2, 2)))
+        #2- Definición de la función de pooling con un filtro de 2px por 2 px
+        redNeurona1Convolucion.add(MaxPooling2D(pool_size=(2, 2)))
 
-#3- Adición de una función de ignorancia
-redNeurona1Convolucion.add(Dropout(0.2))
+        #3- Adición de una función de ignorancia
+        redNeurona1Convolucion.add(Dropout(0.2))
 
-#5 - Se transforma en una sola línea
-redNeurona1Convolucion.add(Flatten())
+        #5 - Se transforma en una sola línea
+        redNeurona1Convolucion.add(Flatten())
 
-#6 - Adición de una red neuronal compuesta por 128 neuronas con una función de activación de tipo Relu
-redNeurona1Convolucion.add(Dense(128, activation='relu'))
+        #6 - Adición de una red neuronal compuesta por 128 neuronas con una función de activación de tipo Relu
+        redNeurona1Convolucion.add(Dense(128, activation='relu'))
 
-#7 - Adición de una red neuronal compuesta por 10 neuronas con una función de activación de tipo softmax
-redNeurona1Convolucion.add(Dense(10, activation='softmax'))
+        #7 - Adición de una red neuronal compuesta por 10 neuronas con una función de activación de tipo softmax
+        redNeurona1Convolucion.add(Dense(10, activation='softmax'))
 
-#8 - Compilación del modelo
-import keras
-redNeurona1Convolucion.compile(loss=keras.losses.categorical_crossentropy,
-                                  optimizer=keras.optimizers.Adam(),
-                                   metrics=['accuracy'])
+        #8 - Compilación del modelo
 
+        redNeurona1Convolucion.compile(loss=keras.losses.categorical_crossentropy,
+                                        optimizer=keras.optimizers.Adam(),
+                                        metrics=['accuracy'])
 
-#9 - Aprendizaje
-historico_aprendizaje  = redNeurona1Convolucion.fit(X_aprendizaje, y_aprendizaje,
-           batch_size=256,
-           epochs=10,
-           verbose=1,
-           validation_data=(X_validacion, y_validacion))
+    def aprendizaje(self):
+        #9 - Aprendizaje
+        historico_aprendizaje  = redNeurona1Convolucion.fit(preparacion.separacion_datos(self.observaciones_test, 2), preparacion.separacion_datos(self.observaciones_test, 4))
+                                batch_size=256,
+                                epochs=10,
+                                verbose=1,
+                                validation_data=(preparacion.separacion_datos(self.observaciones_test, 3), preparacion.separacion_datos(self.observaciones_test, 5))
 
+        return historico_aprendizaje
 
-#10 - Evaluación del modelo
-evaluacion = redNeurona1Convolucion.evaluate(X_test, y_test, verbose=0)
-print('Error:', evaluacion[0])
-print('Precisión:', evaluacion[1])
+    def evaluacion_modelo(self):
+        #10 - Evaluación del modelo
+        evaluacion = self.aprendizaje().evaluate(preparacion.separacion_datos(self.observaciones_test, 0), preparacion.separacion_datos(self.observaciones_test, 1), verbose=0)
+        print('Error:', evaluacion[0])
+        print('Precisión:', evaluacion[1])
+        return evaluacion
 
 
 
