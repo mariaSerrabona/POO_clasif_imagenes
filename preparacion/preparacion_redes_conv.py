@@ -1,12 +1,12 @@
-import pandas as pnd
 import numpy as np
 from keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 
 class preparacion_capa_concolucion():
 
-    def __init__(self,observaciones_entrenamiento, ancho_imagen, largo_imagen ):
+    def __init__(self,observaciones_entrenamiento,observaciones_test, ancho_imagen, largo_imagen ):
         self.observaciones_entrenamiento=observaciones_entrenamiento
+        self.observaciones_test=observaciones_test
         self.ancho_imagen=ancho_imagen
         self.largo_imagen=largo_imagen
 
@@ -21,7 +21,7 @@ class preparacion_capa_concolucion():
 
         return y
 
-    def separacion_datos(self, observaciones_test, indice):
+    def separacion_datos(self, indice):
 
         #Distribución de los datos de entrenamiento en datos de aprendizaje y datos de validación
         #80 % de datos de aprendizaje y 20 % de datos de validación
@@ -39,8 +39,8 @@ class preparacion_capa_concolucion():
         X_validacion /= 255
 
 
-        X_test = np.array(observaciones_test.iloc[:, 1:])
-        y_test = to_categorical(np.array(observaciones_test.iloc[:, 0]))
+        X_test = np.array(self.observaciones_test.iloc[:, 1:])
+        y_test = to_categorical(np.array(self.observaciones_test.iloc[:, 0]))
 
         X_test = X_test.reshape(X_test.shape[0], self.ancho_imagen, self.largo_imagen, 1)
         X_test = X_test.astype('float32')
