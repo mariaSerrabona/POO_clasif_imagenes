@@ -150,6 +150,3 @@ def main():
     convolucion_aumentada.evaluacion_modelo().save_weights("modelo/modelo.h5")
     print("¡Modelo guardado!")
 
-
-if __name__ =='name':
-    main()

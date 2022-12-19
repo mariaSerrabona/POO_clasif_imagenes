@@ -101,7 +101,3 @@ def main():
     plt.legend(['Aprendizaje', 'Test'], loc='upper left')
     plt.show()
 
-
-if __name__ == '__main__':
-    main()
-

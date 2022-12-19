@@ -48,12 +48,8 @@ class capas_convolucion4():
         return preparacion
 
 
-    def red_neuronal(self):
-        red_neuronal_4_capas=red_neuronal_4_capas.creacion()
-        return red_neuronal_4_capas
-
-
     def generador_imagenes(self, indice):
+        red_neuronal_4_capas=red_neuronal_4_capas.creacion()
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
         #9 - Aumento de la cantidad de imágenes
         generador_imagenes = ImageDataGenerator(rotation_range=8,
@@ -71,7 +67,7 @@ class capas_convolucion4():
 
 #10 - Aprendizaje
     def aprendizaje(self):
-        start = time.clock()
+        #start = time.clock()
         historico_aprendizaje = red_neuronal_4_capas.creacion().fit_generator(self.generador_imagenes(0),
                                                         steps_per_epoch=48000//256,
                                                         epochs=50,
@@ -80,8 +76,8 @@ class capas_convolucion4():
                                                         use_multiprocessing=False,
                                                         verbose=1 )
 
-        stop = time.clock()
-        print("Tiempo de aprendizaje = "+str(stop-start))
+        #stop = time.clock()
+        #print("Tiempo de aprendizaje = "+str(stop-start))
         return historico_aprendizaje
 
     def evaluacion(self):
@@ -124,13 +120,10 @@ def main():
 
     #Guardado del modelo
     # serializar modelo a JSON
-    modelo_json = capas_conv_aumentada4.red_neuronal().to_json()
+    modelo_json = red_neuronal_4_capas.creacion().to_json()
     with open("modelo/modelo_4convoluciones.json", "w") as json_file:
         json_file.write(modelo_json)
 
     # serializar pesos a HDF5
-    capas_conv_aumentada4.red_neuronal().save_weights("modelo/modelo_4convoluciones.h5")
+    red_neuronal_4_capas.creacion().save_weights("modelo/modelo_4convoluciones.h5")
     print("¡Modelo guardado!")
-
-if __name__ == "__main__":
-    main()
