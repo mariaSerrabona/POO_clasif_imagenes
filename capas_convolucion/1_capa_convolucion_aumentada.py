@@ -38,33 +38,22 @@ from preparacion.preparacion_redes_conv import preparacion_capa_concolucion
 from preparacion.creacion_red_neuronal import RedNeuronal
 
 
-"""
-#Definición del largo y ancho de la imagen
-LARGO_IMAGEN = 28
-ANCHO_IMAGEN = 28
-
-
-#Carga de los datos de entrenamiento
-observaciones_entrenamiento = pnd.read_csv('datas/zalando/fashion-mnist_train.csv')
-
-#Preparación de los datos de prueba
-observaciones_test = pnd.read_csv('datas/zalando/fashion-mnist_test.csv')
-"""
-
 class capa_conv_aumentada():
+    #constructor con atributos 
     def __init__(self, observaciones_entrenamiento,observaciones_test, ancho_imagen, largo_imagen):
         self.observaciones_entrenamiento=observaciones_entrenamiento
         self.observaciones_test=observaciones_test
         self.ancho_imagen=ancho_imagen
         self.largo_imagen=largo_imagen
 
+    #método que llama al fichero con la preparacion de los datos, en el que se dividen los datos en train y test
     def preparacion_red(self):
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
         return preparacion
 
-
+    #propia creación de la red neuronal
     def creacion_red_neuronal(self, indice):
-
+        #llama al fichero que consitene la creación base de este tipo de red neuronal
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
         #9 - Aumento de la cantidad de imágenes
         generador_imagenes = ImageDataGenerator(rotation_range=8,
@@ -72,7 +61,7 @@ class capa_conv_aumentada():
                                 shear_range=0.3,
                                 height_shift_range=0.08,
                                 zoom_range=0.08)
-
+        #sentencias para poder retornar dos variables, dependiendo de lo que necesitemos
         if indice==0:
             nuevas_imagenes_aprendizaje = generador_imagenes.flow(preparacion.separacion_datos(2), preparacion.separacion_datos(4), batch_size=256)
             return nuevas_imagenes_aprendizaje
@@ -80,7 +69,7 @@ class capa_conv_aumentada():
             nuevas_imagenes_validacion = generador_imagenes.flow(preparacion.separacion_datos(3), preparacion.separacion_datos(5), batch_size=256)
             return nuevas_imagenes_validacion
 
-
+    #función de aprendizaje de la red 
     def aprendizaje (self):
         #10 - Aprendizaje
         creacion= RedNeuronal(self.ancho_imagen, self.largo_imagen)
@@ -95,7 +84,7 @@ class capa_conv_aumentada():
 
         return historico_aprendizaje
 
-
+    #función que evalua el modelo
     def evaluacion_modelo (self):
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
 
@@ -106,6 +95,7 @@ class capa_conv_aumentada():
         return evaluacion
 
 
+#función main 
 def main():
 
     #Definición del largo y ancho de la imagen

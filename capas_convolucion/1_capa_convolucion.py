@@ -43,20 +43,23 @@ import matplotlib.pyplot as plt
 
 
 class capa_convolucion():
+    #constructor de la clase 
     def __init__(self,observaciones_entrenamiento,observaciones_test, ancho_imagen, largo_imagen ):
         self.observaciones_entrenamiento=observaciones_entrenamiento
         self.observaciones_test=observaciones_test
         self.ancho_imagen=ancho_imagen
         self.largo_imagen=largo_imagen
-
+    #función que llama a un mismo fichero en todas las redes
+    #se preparan los datos de entrenamiento y validación de la red neuronal
     def preparacion_red(self):
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento, self.ancho_imagen, self.largo_imagen)
         return preparacion
 
-
+    #creación de este tipo de red
     def creacion_red(self):
 
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento, self.ancho_imagen, self.largo_imagen)
+        #se llama al fichero que contiene la clase capaz de crear una neurona de este tipo
         creacion= RedNeuronal(self.ancho_imagen, self.largo_imagen)
 
         #9 - Aprendizaje

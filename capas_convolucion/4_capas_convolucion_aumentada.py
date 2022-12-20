@@ -35,20 +35,21 @@ import matplotlib.pyplot as plt
 
 
 class capas_convolucion4():
-
+    #constructor de la clase de este tipo de red neuroanl
     def __init__(self,observaciones_entrenamiento,observaciones_test, ancho_imagen, largo_imagen ):
         self.observaciones_entrenamiento=observaciones_entrenamiento
         self.observaciones_test=observaciones_test
         self.ancho_imagen=ancho_imagen
         self.largo_imagen=largo_imagen
 
-
+    #función que llama al fichero que prepara la red con los datos que están dentro de ella
     def preparacion_red(self):
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
         return preparacion
 
-
+    #función que genera este tipo de red neuronal
     def generador_imagenes(self, indice):
+        #sentencia que llama al fichero que crea este tipo de redes 
         red_neuronal_4_capas=red_neuronal_4_capas.creacion()
         preparacion=preparacion_capa_concolucion(self.observaciones_entrenamiento,self.observaciones_test, self.ancho_imagen, self.largo_imagen)
         #9 - Aumento de la cantidad de imágenes

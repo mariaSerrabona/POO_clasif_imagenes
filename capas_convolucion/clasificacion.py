@@ -118,3 +118,11 @@ class clasificacion():
             i=i+1
 
 
+
+def main():
+    clasificacion_objetos=clasificacion(12)
+    clasificacion_objetos.carga_tranf_imagen()
+    clasificacion_objetos.extraccion_probabilidades()
+    
+
+
